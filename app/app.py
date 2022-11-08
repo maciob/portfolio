@@ -17,7 +17,7 @@ mongo = PyMongo(app)
 def run():
     app.run(host="0.0.0.0")
 
-@app.route("/", methods=["GET","POST"])
+@app.route("/api", methods=["GET","POST"])
 @cross_origin()
 def index():
     if request.method == "GET":
@@ -44,7 +44,7 @@ def index():
         except:
             return jsonify(status=500)
 
-@app.route("/<ObjectId:id>", methods=["GET","DELETE","PUT"])
+@app.route("/api/<ObjectId:id>", methods=["GET","DELETE","PUT"])
 @cross_origin()
 def book(id):
     if request.method == "GET":
