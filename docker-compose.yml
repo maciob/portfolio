@@ -1,0 +1,74 @@
+version: '3.7' 
+
+services: 
+  backend:
+    build: 
+      context: app
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+     - 5000:5000
+    networks:
+     - app
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    ports:
+    - 27017:27017
+    volumes:
+    - mongodata:/data/db
+    networks:
+    - app
+
+  # react:
+  #   container_name: react
+  #   build: 
+  #     context: react-front-portfolio
+  #     dockerfile: Dockerfile2
+  #   restart: always
+  #   ports:
+  #   - 5173:5173
+  #   networks:
+  #   - app
+
+  mongoClientTemp:
+    image: mongo:latest
+    container_name: mongoClientTemp
+    links:
+      - mongo:mongo
+    command: 
+      - /bin/bash
+      - -c
+      - mongosh --host mongo -u root -p pass --eval "use users"
+      - mongosh --host mongo -u root -p pass --eval "db.createUser({user:'root', pwd:'pass', roles:[{ role:'userAdminAnyDatabase', db:'admin' },{ role:'readWriteAnyDatabase', db:'admin' }]})"
+      - mongosh --host mongo -u root -p pass --eval "db.adminCommand( { shutdown:1 } )"
+    depends_on:
+      - mongo
+    networks:
+    - app
+
+  nginx:
+    build: 
+      context: react-front-portfolio
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+     - 8082:80
+    environment:
+     - NGINX_PORT=80
+    networks:
+     - app
+
+volumes:
+  mongodata:
+    name: mongodata
+networks:
+  app:
+    name: app
