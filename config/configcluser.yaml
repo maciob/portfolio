@@ -3,7 +3,7 @@ kind: ClusterConfig
 
 metadata:
   version: "1.20"
-  name: MaciejBekasEKS
+  name: MB
   region: eu-west-2
 
 managedNodeGroups:

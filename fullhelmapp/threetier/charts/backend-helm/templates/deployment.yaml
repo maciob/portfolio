@@ -35,16 +35,60 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 5000
               protocol: TCP
+          env:
+          - name: MONGO_USER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configName }}
+                key: MONGO_USER
+          - name: MONGO_PASS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configName }}
+                key: MONGO_PASS
+          - name: MONGO_SERVICE_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configName }}
+                key: MONGO_SERVICE_NAME
+          - name: MONGO_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configName }}
+                key: MONGO_PORT
+          - name: MONGO_COLLECTION
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configName }}
+                key: MONGO_COLLECTION
+          - name: MONGO_AUTHSOURCE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configName }}
+                key: MONGO_AUTHSOURCE
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: http
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            periodSeconds: 10
+            failureThreshold: 10
+
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: http
+            # initialDelaySeconds: 30       
+            # periodSeconds: 20
+            # timeoutSeconds: 10
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            periodSeconds: 10
+            failureThreshold: 10
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

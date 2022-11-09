@@ -4,18 +4,30 @@ from flask_pymongo import PyMongo
 import requests
 import socket
 import json
+import os
 from flask_cors import CORS, cross_origin
 from bson.objectid import ObjectId
 import requests
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = f"mongodb://root:pass@mongo:27017/books?authSource=admin"
+
+app.config["MONGO_URI"] = f"mongodb://{os.environ.get('MONGO_USER')}:{os.environ.get('MONGO_PASS')}@{os.environ.get('MONGO_SERVICE_NAME')}:{os.environ.get('MONGO_PORT')}/{os.environ.get('MONGO_COLLECTION')}?authSource={os.environ.get('MONGO_AUTHSOURCE')}"
+
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+
 mongo = PyMongo(app)
 
 def run():
     app.run(host="0.0.0.0")
+
+@app.route("/health", methods=["GET"])
+@cross_origin()
+def check():
+    if request.method == "GET":
+        return jsonify(status=200)
+
 
 @app.route("/api", methods=["GET","POST"])
 @cross_origin()
