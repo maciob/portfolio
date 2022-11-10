@@ -3,7 +3,7 @@ version: '3.7'
 services: 
   backend:
     build: 
-      context: app
+      context: portfolio-backend
       dockerfile: Dockerfile
     container_name: backend
     environment:
