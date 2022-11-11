@@ -3,14 +3,14 @@ kind: ClusterConfig
 
 metadata:
   version: "1.20"
-  name: MB
+  name: MB-finala
   region: eu-west-2
 
 managedNodeGroups:
   - name: master
     instanceType: t2.medium
-    minSize: 2
-    maxSize: 2
+    minSize: 3
+    maxSize: 3
     volumeSize: 10
     volumeType: gp2
     labels: {role: master}
