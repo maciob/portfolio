@@ -13,6 +13,7 @@ services:
       MONGO_PORT: 27017
       MONGO_COLLECTION: books
       MONGO_AUTHSOURCE: admin
+      LOGGING_URL: logstash
     ports:
      - 5000:5000
     networks:
@@ -50,6 +51,16 @@ services:
     networks:
      - app
     command: /bin/sh -c "export BACKEND_SERVICE && envsubst '$${BACKEND_SERVICE}' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"
+
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:6.2.4
+    volumes:
+      - ./config/logstash.conf:/config/logstash.conf
+    working_dir: /config
+    entrypoint: logstash -f logstash.conf
+    networks:     
+    - app
 
 volumes:
   mongodata:
