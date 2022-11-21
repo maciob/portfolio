@@ -1,7 +1,7 @@
 *.pem
 secretinstruction.txt
 mysealedsecret.yaml
-
+secret.yaml
 # Local .terraform directories
 **/.terraform/*
 
